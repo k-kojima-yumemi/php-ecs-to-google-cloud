@@ -40,7 +40,7 @@ try {
         'suppressKeyFileNotice' => true,
     ]);
 
-    $bucketName = getenv('GCS_BUCKET') ?: 'koma-yumemi-resources';
+    $bucketName = getenv('GCS_BUCKET');
     $bucket = $storage->bucket($bucketName);
     printf("Bucket: %s%s", $bucket->name(), PHP_EOL);
 } catch (Exception $e) {
@@ -60,7 +60,7 @@ try {
         'suppressKeyFileNotice' => true,
     ]);
 
-    $bucketName = getenv('GCS_BUCKET') ?: 'koma-yumemi-resources';
+    $bucketName = getenv('GCS_BUCKET');
     $bucket = $storage->bucket($bucketName);
     printf("Bucket: %s%s", $bucket->name(), PHP_EOL);
 } catch (Exception $e) {
