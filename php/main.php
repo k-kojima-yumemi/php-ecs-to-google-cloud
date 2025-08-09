@@ -41,13 +41,13 @@ try {
 
 try {
     echo "Kreait\Firebase\Factory Auth".PHP_EOL;
-    print_r(new Factory()->getDebugInfo());
     $client = new Factory()->createStorage();
     foreach ($client->getStorageClient()->buckets() as $bucket) {
         printf('Bucket: %s'.PHP_EOL, $bucket->getName());
     }
 } catch (Exception $e) {
-    echo $e->getMessage().PHP_EOL;
+    echo "Kreait\Firebase\Factory Error".PHP_EOL;
+    throw $e;
 }
 
 try {
