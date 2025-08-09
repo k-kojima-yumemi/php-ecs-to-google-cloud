@@ -1,0 +1,13 @@
+services:
+  php:
+    init: true
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/app
+      - vendor-store:/app/vendor
+    working_dir: /app
+
+volumes:
+  vendor-store: { }
