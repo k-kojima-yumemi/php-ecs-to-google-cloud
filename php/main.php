@@ -41,6 +41,7 @@ try {
 
 try {
     echo "Kreait\Firebase\Factory Auth".PHP_EOL;
+    print_r(new Factory()->getDebugInfo());
     $client = new Factory()->createStorage();
     foreach ($client->getStorageClient()->buckets() as $bucket) {
         printf('Bucket: %s'.PHP_EOL, $bucket->getName());
