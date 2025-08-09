@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Aws\Exception\AwsException;
 use Aws\Exception\CredentialsException;
 use Aws\Sts\StsClient;
+use Google\Cloud\Storage\StorageClient;
 use Kreait\Firebase\Factory;
 
 require_once "vendor/autoload.php";
@@ -31,6 +32,15 @@ try {
     $client = new Factory()->createStorage();
     foreach ($client->getStorageClient()->buckets() as $bucket) {
         printf('Bucket: %s' . PHP_EOL, $bucket->getName());
+    }
+} catch (Exception $e) {
+    echo $e->getMessage().PHP_EOL;
+}
+
+try {
+    $client = new StorageClient(['suppressKeyFileNotice' => true]);
+    foreach ($client->buckets() as $bucket) {
+        printf("Bucket: %s%s", $bucket->get('Name'), PHP_EOL);
     }
 } catch (Exception $e) {
     echo $e->getMessage().PHP_EOL;
