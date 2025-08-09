@@ -7,3 +7,8 @@ apt-get install -y zip unzip --no-install-recommends
 apt-get clean
 rm -rf /var/lib/apt/lists/*
 EOF
+
+RUN <<EOF
+pecl install xdebug
+docker-php-ext-enable xdebug
+EOF
