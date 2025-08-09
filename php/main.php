@@ -31,7 +31,7 @@ try {
 try {
     $client = new Factory()->createStorage();
     foreach ($client->getStorageClient()->buckets() as $bucket) {
-        printf('Bucket: %s' . PHP_EOL, $bucket->getName());
+        printf('Bucket: %s'.PHP_EOL, $bucket->getName());
     }
 } catch (Exception $e) {
     echo $e->getMessage().PHP_EOL;
@@ -39,9 +39,8 @@ try {
 
 try {
     $client = new StorageClient(['suppressKeyFileNotice' => true]);
-    foreach ($client->buckets() as $bucket) {
-        printf("Bucket: %s%s", $bucket->get('Name'), PHP_EOL);
-    }
+    $bucket = $client->bucket("koma-yumemi-resources");
+    printf("Bucket: %s%s", $bucket->name(), PHP_EOL);
 } catch (Exception $e) {
     echo $e->getMessage().PHP_EOL;
 }
