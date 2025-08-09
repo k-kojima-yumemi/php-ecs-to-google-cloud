@@ -8,6 +8,7 @@ use Aws\Sts\StsClient;
 use Google\Auth\ApplicationDefaultCredentials;
 use Google\Cloud\Storage\StorageClient;
 use Kreait\Firebase\Factory;
+use App\ExternalAccountCredentialsByAws;
 
 require_once "vendor/autoload.php";
 
@@ -38,7 +39,7 @@ try {
 } catch (Exception $e) {
     echo $e->getMessage().PHP_EOL;
 }
-
+/*
 try {
     echo "Kreait\Firebase\Factory Auth".PHP_EOL;
     $client = new Factory()->createStorage();
@@ -57,4 +58,32 @@ try {
     printf("Bucket: %s%s", $bucket->name(), PHP_EOL);
 } catch (Exception $e) {
     echo $e->getMessage().PHP_EOL;
+}*/
+
+try {
+    echo "StorageClient Auth via ExternalAccountCredentialsByAws".PHP_EOL;
+    $jsonPath = __DIR__ . '/auth.json';
+    if (!is_file($jsonPath)) {
+        throw new Exception("auth.json not found: " . $jsonPath);
+    }
+    $jsonKey = json_decode((string) file_get_contents($jsonPath), true);
+    if (!is_array($jsonKey)) {
+        throw new Exception('auth.json is not a valid JSON object');
+    }
+
+    // Use a broad scope for testing. Adjust as needed.
+    $scope = 'https://www.googleapis.com/auth/cloud-platform';
+    $credentials = new ExternalAccountCredentialsByAws($scope, $jsonKey);
+
+    $storage = new StorageClient([
+        'credentialsFetcher' => $credentials,
+        'suppressKeyFileNotice' => true,
+    ]);
+
+    $bucketName = getenv('GCS_BUCKET') ?: 'koma-yumemi-resources';
+    $bucket = $storage->bucket($bucketName);
+    printf("Bucket: %s%s", $bucket->name(), PHP_EOL);
+} catch (Exception $e) {
+    echo "ExternalAccountCredentialsByAws Error" . PHP_EOL;
+    echo $e->getMessage() . PHP_EOL;
 }
