@@ -14,7 +14,6 @@ echo "Hello World!".PHP_EOL;
 try {
     $client = new StsClient([
         'version' => 'latest',
-        'region' => 'us-west-1'
     ]);
     $identityResult = $client->getCallerIdentity();
     echo sprintf('UserId: %s%s', $identityResult->get('UserId'), PHP_EOL);
