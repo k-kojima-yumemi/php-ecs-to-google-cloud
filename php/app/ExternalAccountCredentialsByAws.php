@@ -24,8 +24,8 @@ class ExternalAccountCredentialsByAws implements
     ProjectIdProviderInterface
 {
 
-    private const EXTERNAL_ACCOUNT_TYPE = 'external_account';
-    private const CLOUD_RESOURCE_MANAGER_URL = 'https://cloudresourcemanager.UNIVERSE_DOMAIN/v1/projects/%s';
+    private const string EXTERNAL_ACCOUNT_TYPE = 'external_account';
+    private const string CLOUD_RESOURCE_MANAGER_URL = 'https://cloudresourcemanager.UNIVERSE_DOMAIN/v1/projects/%s';
 
     private OAuth2 $auth;
     private ?string $quotaProject = null;
@@ -37,10 +37,10 @@ class ExternalAccountCredentialsByAws implements
     private string $universeDomain;
 
     /**
-     * @param string|string[] $scope
+     * @param string|string[]|null $scope
      * @param array $jsonKey
      */
-    public function __construct(array|string $scope, array $jsonKey)
+    public function __construct(array|string|null $scope, array $jsonKey)
     {
         if (!array_key_exists('type', $jsonKey)) {
             throw new InvalidArgumentException('json key is missing the type field');
@@ -85,6 +85,40 @@ class ExternalAccountCredentialsByAws implements
         if (!$this->isWorkforcePool() && $this->workforcePoolUserProject) {
             throw new InvalidArgumentException('workforce_pool_user_project should not be set for non-workforce pool credentials.');
         }
+    }
+
+    /**
+     * Create from jsonKey array or JSON string.
+     *
+     * @param string|string[]|null $scope
+     */
+    public static function fromJson(array|string $jsonKeyOrJsonString, array|string|null $scope = null): self
+    {
+        $jsonKey = is_array($jsonKeyOrJsonString)
+            ? $jsonKeyOrJsonString
+            : (json_decode($jsonKeyOrJsonString, true) ?: []);
+        if (empty($jsonKey)) {
+            throw new InvalidArgumentException('Invalid jsonKey: not an array or invalid JSON string');
+        }
+        return new self($scope, $jsonKey);
+    }
+
+    /**
+     * Create from file path to jsonKey.
+     *
+     * @param string|string[]|null $scope
+     */
+    public static function fromFile(string $filePath, array|string|null $scope = null): self
+    {
+        if (!is_file($filePath)) {
+            throw new InvalidArgumentException('auth file not found: '.$filePath);
+        }
+        $content = (string) file_get_contents($filePath);
+        $jsonKey = json_decode($content, true);
+        if (!is_array($jsonKey)) {
+            throw new InvalidArgumentException('auth file is not a valid JSON object: '.$filePath);
+        }
+        return new self($scope, $jsonKey);
     }
 
     #[Override]
