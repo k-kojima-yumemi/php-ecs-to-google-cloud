@@ -61,7 +61,8 @@ class AwsSdkSource implements ExternalAccountCredentialSourceInterface
 
         // Build the request exactly as the STS server expects.
         // The regionalCredVerificationUrl should include the GetCallerIdentity action and version query params.
-        $request = new Request('POST', $this->regionalCredVerificationUrl);
+        $url = str_replace('{region}', $region, $this->regionalCredVerificationUrl);
+        $request = new Request('POST', $url);
 
         // Sign the request with SigV4 for service "sts"
         $signer = new SignatureV4('sts', $region);

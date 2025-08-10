@@ -100,7 +100,7 @@ class ExternalAccountCredentialsByAws implements
         if (empty($jsonKey)) {
             throw new InvalidArgumentException('Invalid jsonKey: not an array or invalid JSON string');
         }
-        return new self($scope, $jsonKey);
+        return new self($scope ?? 'https://www.googleapis.com/auth/cloud-platform', $jsonKey);
     }
 
     /**
@@ -118,7 +118,7 @@ class ExternalAccountCredentialsByAws implements
         if (!is_array($jsonKey)) {
             throw new InvalidArgumentException('auth file is not a valid JSON object: '.$filePath);
         }
-        return new self($scope, $jsonKey);
+        return new self($scope ?? 'https://www.googleapis.com/auth/cloud-platform', $jsonKey);
     }
 
     #[Override]

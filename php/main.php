@@ -42,7 +42,9 @@ try {
 
     $bucketName = getenv('GCS_BUCKET');
     $bucket = $storage->bucket($bucketName);
-    printf("Bucket: %s%s", $bucket->name(), PHP_EOL);
+    $info = $bucket->info();
+
+    printf("Bucket: %s %s%s", $info["name"], $info["location"], PHP_EOL);
 } catch (Exception $e) {
     echo "ExternalAccountCredentialsByAws Error".PHP_EOL;
     echo $e->getMessage().PHP_EOL;
@@ -52,6 +54,9 @@ try {
     echo "StorageClient Auth via ExternalAccountCredentialsByAws fromJson".PHP_EOL;
     $jsonPath = __DIR__.'/auth.json';
     $json = file_get_contents($jsonPath);
+    if ($json === false) {
+        throw new InvalidArgumentException("Unable to read json file");
+    }
 
     $credentials = ExternalAccountCredentialsByAws::fromJson($json);
 
@@ -62,7 +67,9 @@ try {
 
     $bucketName = getenv('GCS_BUCKET');
     $bucket = $storage->bucket($bucketName);
-    printf("Bucket: %s%s", $bucket->name(), PHP_EOL);
+    $info = $bucket->info();
+
+    printf("Bucket: %s %s%s", $info["name"], $info["location"], PHP_EOL);
 } catch (Exception $e) {
     echo "ExternalAccountCredentialsByAws Error".PHP_EOL;
     echo $e->getMessage().PHP_EOL;
