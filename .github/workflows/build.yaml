@@ -1,0 +1,69 @@
+name: Build Image
+on:
+  push:
+    branches:
+      - main
+  pull_request: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: 'actions/checkout@v4'
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - name: Log into registry ghcr.io
+        if: ${{ github.event_name == 'push' }}
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and Push
+        uses: docker/build-push-action@v6
+        with:
+          push: ${{ github.event_name == 'push' }}
+          tags: ghcr.io/${{ github.repository }}:latest
+          platforms: linux/amd64,linux/arm64
+          context: php
+          file: Release.Dockerfile
+
+  cleanup:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' }}
+    needs:
+      - build
+    permissions:
+      packages: write
+    steps:
+      - name: Get package name
+        id: package-name
+        run: |
+          set -eux
+          echo "package=$(basename "${REPOSITORY}")" >> "$GITHUB_OUTPUT"
+        env:
+          REPOSITORY: ${{ github.repository }}
+      - name: Delete old package versions
+        uses: actions/delete-package-versions@v5
+        with:
+          package-name: ${{ steps.package-name.outputs.package }}
+          package-type: 'container'
+          min-versions-to-keep: 1
+          delete-only-untagged-versions: true
+      - name: Validate image tag exists
+        run: docker manifest inspect ghcr.io/${{ github.repository }}:latest
+
+  renovate-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    needs:
+      - build
+    # See https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/accessing-contextual-information-about-workflow-runs#needs-context for result values
+    if: ${{ cancelled() || failure() }}
+    steps:
+      - run: 'false'
