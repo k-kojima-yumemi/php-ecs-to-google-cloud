@@ -651,6 +651,11 @@ Identity連携には対応していないと明言されていますが、リフ
 リフレクションを使用して内部のprivateフィールドを書き換えているため、将来のバージョンでは動かないことが考えられます。細心の注意を払って動作確認するようにしてください。
 この記事では[7.21.1](https://github.com/kreait/firebase-php/releases/tag/7.21.1)で検証を行いました。
 
+:::note warn
+`GOOGLE_APPLICATION_CREDENTIALS` の環境変数があるとそれをService Account Keyとして読み込む実装になっているようです。そのためexternal_account用のファイルを `GOOGLE_APPLICATION_CREDENTIALS` で設定するとエラーになります。
+ExternalAccountCredentialsByAwsの実装では `GOOGLE_APPLICATION_CREDENTIALS` に依存していないため、この環境変数の設定は不要です。
+:::
+
 `Kreait\Firebase`ではFactoryを使ってクライアントを作成します。
 このFactoryではGoogle Cloud以外の環境で動作させる際Service Accountの認証情報が必須となります。
 しかし内部で使用している認証取得方法をリフレクションで書き換えることでService Accountなしで動作させます。
