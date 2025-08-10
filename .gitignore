@@ -30,3 +30,4 @@ Homestead.json
 auth.json
 .idea
 compose.override.yaml
+/test/
