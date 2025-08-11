@@ -162,13 +162,13 @@ EC2からアクセスするのであれば `GOOGLE_APPLICATION_CREDENTIALS` の�
 
 # PHPからのGoogle Cloud SDKを用いたアクセス
 
-デフォルトのSDKの実装(subjectTokenFetcherとしてAwsNativeSource.phpを使用)では、「認証情報の構成ファイルの作成」で記述されている
-`region_url` や `url` にアクセスします。
+デフォルトのSDKの実装(subjectTokenFetcherとしてAwsNativeSource.phpを使用)では、「認証情報の構成ファイルの作成」で記述されているregion_urlやurlにアクセスします。
 ECS環境では `169.254.170.2$AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` のURLで認証情報を取得するため[^ecs-iam]、 JSONに記載されているURLはECS環境では使用できません。
 Google Cloud SDKのPHP実装はこのECS独自の仕組みに対応していないため、そのままではAWSの認証情報を取得できず、エラーとなってしまいます。
 そのため独自に記述した認証用のコードを使用してGoogle Cloudの各種APIを呼び出すようにします。
 
 参考資料で紹介したNode.jsでの例でも、認証用のコードを作成しそちらを使用してAPIを呼び出しています。
+言語が異なりSDKの実装も異なるため、Node.jsの例をそのまま模倣することは叶いません。
 
 ## 認証用のコード
 
